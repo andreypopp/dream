@@ -323,7 +323,7 @@ let openssl = {
 
     let perform_tls_handshake =
       Gluten_lwt_unix.Server.SSL.create_default
-        ~alpn_protocols:["h2"; "http/1.1"]
+        ~alpn_protocols:["acme-tls/1"; "h2"; "http/1.1"]
         ~certfile:certificate_file
         ~keyfile:key_file
     in
@@ -354,6 +354,9 @@ let openssl = {
           httpaf_handler client_address tls_endpoint
         | Some "h2" ->
           h2_handler client_address tls_endpoint
+        | Some "acme-tls/1" ->
+          (* acme-tls/1 doesn't do anything beyond the negotiation *)
+          Lwt.return (Ssl.shutdown tls_socket)
         | Some _ ->
           assert false
   end;
