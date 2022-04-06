@@ -356,6 +356,7 @@ let openssl = {
           h2_handler client_address tls_endpoint
         | Some "acme-tls/1" ->
           (* acme-tls/1 doesn't do anything beyond the negotiation *)
+          (* TODO: is it enough to close the underlying unix socket? *)
           Lwt.return (Ssl.shutdown tls_socket)
         | Some _ ->
           assert false
